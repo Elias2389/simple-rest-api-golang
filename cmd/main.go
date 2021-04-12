@@ -4,8 +4,9 @@ import (
 	"github.com/Elias2389/api-rest/authorization"
 	"github.com/Elias2389/api-rest/handler"
 	"github.com/Elias2389/api-rest/storage"
+	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"log"
-	"net/http"
 )
 
 func main() {
@@ -15,15 +16,17 @@ func main() {
 	}
 
 	store := storage.NewMemory()
-	mux := http.NewServeMux()
+	e := echo.New()
 
-	handler.RoutePerson(mux, &store)
-	handler.RouteLogin(mux, &store)
+	e.Use(middleware.Recover())
+	e.Use(middleware.Logger())
+
+	handler.RoutePerson(e, &store)
+	handler.RouteLogin(e, &store)
 
 	log.Println("Init server in port: 8080")
-	err = http.ListenAndServe(":8080", mux)
+	err = e.Start(":8080")
 	if err != nil {
 		log.Printf("Error en el servidor: %v\n", err)
 	}
-
 }
