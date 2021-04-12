@@ -28,6 +28,7 @@ func (m *Memory) Create(person *model.Person) error {
 	}
 
 	m.currentID++
+
 	m.Persons[m.currentID] = *person
 
 	return nil
@@ -78,4 +79,3 @@ func (m *Memory) GetAll() (model.Persons, error) {
 
 	return result, nil
 }
-
