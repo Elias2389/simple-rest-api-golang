@@ -2,19 +2,24 @@ package handler
 
 import (
 	"github.com/Elias2389/api-rest/middleware"
-	"net/http"
+	"github.com/labstack/echo/v4"
 )
 
-func RoutePerson(mux *http.ServeMux, storage Storage) {
+// Router of person
+func RoutePerson(e *echo.Echo, storage Storage) {
 	h := newPerson(storage)
-	mux.HandleFunc("/v1/persons/create", middleware.Log(middleware.Authentication(h.create)))
-	mux.HandleFunc("/v1/persons/", middleware.Log(h.getAll))
-	mux.HandleFunc("/v1/persons/get", h.getByID)
+
+	person := e.Group("/v1/persons")
+	person.Use(middleware.Authentication)
+
+	person.POST("", h.create)
+	person.GET("", h.getAll)
+	person.GET("/:id", h.getByID)
 }
 
 // RouteLogin .
-func RouteLogin(mux *http.ServeMux, storage Storage) {
+func RouteLogin(e *echo.Echo, storage Storage) {
 	h := newLogin(storage)
 
-	mux.HandleFunc("/v1/login", h.login)
+	e.POST("/v1/login", h.login)
 }
